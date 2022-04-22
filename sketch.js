@@ -10,6 +10,8 @@ let HEIGHT;
 let COLS;
 let ROWS;
 const SIZE = 10;
+const SPACE_KEY_CODE = 32;
+const ENTER_KEY_CODE = 13;
 
 var grid = []; // 2D array
 
@@ -42,16 +44,19 @@ function Cell(i, j) {
     }
   };
 
-  this.update = function (grid) {               // follow the rules
+  this.update = function (grid) {
+    // follow the rules
     var i = this.i;
     var j = this.j;
-    if (this.isDead) {                  // if it's dead and there are 3 living neighbors
+    if (this.isDead) {
+      // if it's dead and there are 3 living neighbors
       if (grid[i][j].neighbors == 3) {
-        this.isDead = false;            // revive it
+        this.isDead = false; // revive it
       }
     } else {
-      if (grid[i][j].neighbors < 2 || grid[i][j].neighbors > 3) {           // if it's alive and there are less than 2 or 
-        this.isDead = true;                                                 // greater than 3 living neighbors => kill it
+      if (grid[i][j].neighbors < 2 || grid[i][j].neighbors > 3) {
+        // if it's alive and there are less than 2 or
+        this.isDead = true; // greater than 3 living neighbors => kill it
       }
     }
   };
@@ -63,13 +68,13 @@ function Cell(i, j) {
 
     var d = dist(mouseX, mouseY, centerX, centerY);
     if (d <= SIZE / 2) {
-      console.log(centerX, centerY, mouseX, mouseY);
       this.isDead = false;
     }
   };
 }
 
-function windowResized() {              // resize canvas
+function windowResized() {
+  // resize canvas
   resizeCanvas(windowWidth, windowHeight);
   WIDTH = windowWidth;
   HEIGHT = windowHeight;
@@ -89,6 +94,7 @@ function setup() {
 
 function mousePressed() {
   // get mouse press
+  loop();
   for (var i = 0; i < COLS; i++) {
     for (var j = 0; j < ROWS; j++) {
       grid[i][j].clicked();
@@ -101,7 +107,7 @@ function draw() {
 
   for (var i = 0; i < COLS; i++) {
     for (var j = 0; j < ROWS; j++) {
-      grid[i][j].getNeighbors(grid);        // count all the living neighbors
+      grid[i][j].getNeighbors(grid); // count all the living neighbors
     }
   }
 
@@ -111,16 +117,16 @@ function draw() {
     }
   }
 
-  var oldGrid = copyGrid(grid);           // copy the grid for the update
+  var oldGrid = copyGrid(grid); // copy the grid for the update
 
   for (var i = 0; i < COLS; i++) {
     for (var j = 0; j < ROWS; j++) {
-      grid[i][j].update(oldGrid);       // update the cell
+      grid[i][j].update(oldGrid); // update the cell
     }
   }
 }
 
-function copyGrid(grid) {               
+function copyGrid(grid) {
   var currentGrid = new Array(COLS);
   for (var i = 0; i < COLS; i++) {
     currentGrid[i] = new Array(ROWS);
@@ -133,9 +139,9 @@ function copyGrid(grid) {
   return currentGrid;
 }
 
-
-function randomGrid(){                      // initialize a random grid
-    var grid = new Array(COLS);
+function randomGrid() {
+  // initialize a random grid
+  var grid = new Array(COLS);
   for (let i = 0; i < COLS; i++) {
     grid[i] = new Array(ROWS);
   }
@@ -148,3 +154,19 @@ function randomGrid(){                      // initialize a random grid
   return grid;
 }
 
+// press SPACE to stop/continue the loop and ENTER to replay
+function keyPressed() {
+  if (keyCode === SPACE_KEY_CODE) {
+    if (isLooping()) {
+      noLoop();
+    } else {
+      loop();
+    }
+  }
+
+  if (keyCode === ENTER_KEY_CODE) {
+    window.location.reload();
+  }
+
+  return false;
+}
